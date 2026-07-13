@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# AI Data
+RAG_DB/
+LOGS/
+AUTO_BACKUPS/
+STATE/
+
+# Personal data
+EDWIN_DATA/
+.env
+
+# Mac
+.DS_Store
+
+# Backups
+*.save

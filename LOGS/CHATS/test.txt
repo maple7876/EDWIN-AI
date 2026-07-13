@@ -1,1 +1,0 @@
-Sir discussed building AI memory system using local MacBook M1 setup with Ollama and Open WebUI. Goal is persistent assistant memory using RAG.
