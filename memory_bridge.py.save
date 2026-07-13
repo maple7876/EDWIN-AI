@@ -1,0 +1,77 @@
+import requests
+import chromadb
+from datetime import datetime
+import hashlib
+
+client = chromadb.PersistentClient(path="/Users/aaqib/KAREN_SYSTEM/RAG_DB")
+collection = client.get_or_create_collection("karen_memory")
+
+
+def make_id(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def add_memory(text, mtype="fact", importance=3):
+    collection.add(
+        documents=[text],
+        metadatas=[{
+            "type": mtype,
+            "importance": importance,
+            "timestamp": str(datetime.now())
+        }],
+        ids=[make_id(text)]
+    )
+
+
+def get_memory(query, k=5):
+    results = collection.query(
+        query_texts=[query],
+        n_results=k
+    )
+
+    docs = results.get("documents", [[]])[0]
+    return "\n".join(docs)
+
+
+def auto_add_memory(user_input, assistant_output):
+    combined = f"User: {user_input}\nAssistant: {assistant_output}"
+
+    keywords = ["i am", "i'm", "my", "project", "friend", "building", "plan", "goal"]
+
+    if any(k in user_input.lower() for k in keywords):
+        add_memory(combined, mtype="chat", importance=4)
+
+
+def ollama_llm(prompt, model="llama3.2:latest"):
+    response = requests.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": model,
+            "prompt": prompt,
+            "stream": False
+        }
+    )
+
+    data = response.json()
+
+    return data.get("response") or data.get("message", {}).get("content", "")
+
+
+def chat_with_memory(user_input):
+    context = get_memory(user_input)
+
+    prompt = f"""
+You are KAREN, a structured AI assistant.
+
+Memory:
+{context}
+
+User: {user_input}
+Assistant:
+"""
+
+    response = ollama_llm(prompt)
+
+    auto_add_memory(user_input, response)
+
+    return response

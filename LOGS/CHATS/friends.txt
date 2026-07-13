@@ -1,0 +1,11 @@
+Subhaan is a long-time childhood friend.
+Isaac is practical and reserved.
+Javi is outgoing and socially dominant.
+Daniel is highly analytical and strategic.
+Aaqib is building a local AI memory system like Jarvis.
+
+Subhaan prefers low-drama environments and avoids conflict.
+Isaac focuses on efficiency and technical thinking.
+Javi adapts socially depending on the group.
+Daniel tends to analyze group dynamics instead of participating emotionally.
+Aaqib is designing a Jarvis-style assistant with RAG memory.

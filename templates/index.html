@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JARVIS</title>
+</head>
+
+<body style="background:#0a0f1c; color:white; font-family:Arial; padding:40px;">
+
+    <h1>JARVIS ONLINE</h1>
+
+    <input
+        id="msg"
+        type="text"
+        placeholder="Type here..."
+        style="
+            width:300px;
+            padding:10px;
+            font-size:16px;
+        "
+    >
+
+    <button
+        onclick="sendMessage()"
+        style="
+            padding:10px;
+            font-size:16px;
+        "
+    >
+        Send
+    </button>
+
+    <div id="chat" style="margin-top:30px;"></div>
+
+    <script>
+        async function sendMessage() {
+
+            let input = document.getElementById("msg");
+            let text = input.value;
+
+            if (!text) return;
+
+            document.getElementById("chat").innerHTML +=
+                "<p><b>You:</b> " + text + "</p>";
+
+            input.value = "";
+
+            let response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: text
+                })
+            });
+
+            let data = await response.json();
+
+            document.getElementById("chat").innerHTML +=
+                "<p><b>JARVIS:</b> " + data.response + "</p>";
+        }
+    </script>
+
+</body>
+</html>
