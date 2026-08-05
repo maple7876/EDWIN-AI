@@ -20,3 +20,20 @@ EDWIN_DATA/
 
 # Backups
 *.save
+
+# Python environments
+.venv/
+
+# Build artifacts
+build/
+dist/
+
+# PyInstaller
+*.spec
+
+# Tauri bundled binaries
+desktop/src-tauri/binaries/
+
+# AI assistant handoff / development notes
+CLAUDE_HANDOFF/
+create_handoff.py

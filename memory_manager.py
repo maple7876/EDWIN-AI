@@ -12,7 +12,7 @@ SHOWCASE_PROFILE = {
     "favorite_aircraft": "SR-71 Blackbird",
     "favorite_car": "Audi R8",
     "main_project": "J.A.R.V.I.S. AI System",
-    "goal": "Build next-generation technology systems"
+    "goal": "Get v0.2.0 ALPHA to Olaf, and run optimally"
 }
 
 

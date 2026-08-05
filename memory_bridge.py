@@ -1,3 +1,5 @@
+from system.model_selector import get_selected_model
+from system.paths import memory_dir
 from tool_registry import TOOLS
 import requests
 import chromadb
@@ -7,9 +9,7 @@ import hashlib
 # -----------------------------
 # MEMORY SETUP (ChromaDB)
 # -----------------------------
-client = chromadb.PersistentClient(
-    path="/Users/aaqib/JARVIS_SYSTEM/RAG_DB"
-)
+client = chromadb.PersistentClient(path=str(memory_dir()))
 
 collection = client.get_or_create_collection("jarvis_memory")
 
@@ -43,36 +43,6 @@ def get_memory(query, k=3):
 # -----------------------------
 # MODEL ROUTER (FAST vs SMART)
 # -----------------------------
-def choose_model(user_input):
-    text = user_input.lower()
-
-    # Very short/simple requests
-    if len(text.split()) < 8:
-        return "qwen2.5"
-
-    complex_keywords = [
-        "design",
-        "architecture",
-        "debug",
-        "optimize",
-        "analyze",
-        "strategy",
-        "compare",
-        "system",
-        "code"
-    ]
-
-    score = 0
-
-    for word in complex_keywords:
-        if word in text:
-            score += 1
-
-    # Complex reasoning tasks
-    if score >= 2 or len(text.split()) > 25:
-        return "qwen3.5:9b"
-
-    return "qwen2.5"
 
 
 # -----------------------------
@@ -92,7 +62,13 @@ def choose_num_predict(user_input):
 
     # Complex requests
     return 250
-def ollama_llm(prompt, model="qwen2.5"):
+def ollama_llm(prompt, model=None):
+    if model is None:
+        model = get_selected_model()
+
+    print("MODEL BEING USED:", model)
+    print("THINKING DISABLED: True")
+
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
@@ -100,14 +76,20 @@ def ollama_llm(prompt, model="qwen2.5"):
                 "model": model,
                 "prompt": prompt,
                 "stream": False,
+                "think": False,
                 "options": {
                     "temperature": 0.6,
-                    "num_predict": choose_num_predict(prompt)
-                }
-            }
+                    "num_predict": choose_num_predict(prompt),
+                },
+            },
+            timeout=300,
         )
 
+        response.raise_for_status()
+
         data = response.json()
+
+        print("OLLAMA RESPONSE KEYS:", data.keys())
 
         return data.get("response", "").strip()
 
@@ -165,13 +147,12 @@ def chat_with_memory(user_input):
 
     context = get_memory(user_input)
 
-    model = choose_model(user_input)
     tool_result = check_tools(user_input)
 
     if tool_result:
         return tool_result
+
     print("\n[DEBUG]")
-    print("MODEL:", model)
     print("MEMORY:", context)
     print()
 
@@ -192,7 +173,7 @@ You are concise, intelligent, calm, and direct.
 
 Rules:
 - Keep answers short by default.
-- Avoid customer-service style phrasing
+- Avoid customer-service style phrasing.
 - Speak operationally and directly.
 - Always respond in English.
 - Stop speaking once the question is answered.
@@ -205,6 +186,7 @@ Rules:
 - Keep responses efficient and sharp.
 - Do not assume extra context unless explicitly stated.
 - If memory is empty or uncertain, say you do not know instead of guessing.
+
 MEMORY:
 {context}
 
@@ -214,7 +196,7 @@ USER:
 EDWIN:
 """
 
-    response = ollama_llm(prompt, model=model)
+    response = ollama_llm(prompt)
 
     auto_add_memory(user_input, response)
 
