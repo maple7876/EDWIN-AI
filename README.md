@@ -373,6 +373,16 @@ Built using:
 
 ---
 
+# Backend
+cd ~/JARVIS_SYSTEM
+source .venv/bin/activate
+python api.py
+
+# Frontend
+cd ~/JARVIS_SYSTEM/desktop
+npm run tauri dev
+---
+
 # Project Vision
 
 > *"The future of personal AI shouldn't live exclusively in the cloud. It should live with the person who uses it."*
