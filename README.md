@@ -1,5 +1,5 @@
+<img width="964" height="254" alt="Screenshot 2026-08-05 at 10 04 05 PM" src="https://github.com/user-attachments/assets/a0464caa-9a51-4b2b-9257-d3413d94ea83" />
 # EDWIN
-<img width="1254" height="1254" alt="ChatGPT Image Aug 5, 2026, 07_42_00 PM" src="https://github.com/user-attachments/assets/aba6076f-1773-4214-93a8-8d0c0927297d" />
 
 
 > **A local-first AI operating system built for everyday computing.**
